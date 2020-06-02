@@ -1,57 +1,54 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"log"
-	"time"
-	"sync"
-	"sync/atomic"	
 	"net"
-	"flag"
-
+	"sync"
+	"sync/atomic"
+	"time"
 )
 
-
 //time
-var doneBy time.Time 
+var doneBy time.Time
 
 //sync
 var wg sync.WaitGroup
 var runEnd uint32
 
-
-//stats 
+//stats
 var successful_reqs uint64
-var connect_fails uint64 
-var io_fails uint64 
-
+var connect_fails uint64
+var io_fails uint64
 
 //params
-var	connAddr string  
-var connTimeout int 
-var	runConnections int 
-var	runDuration int 
-var	messageLen int  
+var connAddr string
+var connTimeout int
+var runConnections int
+var runDuration int
+var messageLen int
 
-
-//
-var message = []byte{'1', '2', '3', '4', '5', '6'}
-var recvbuff = []byte{0, 0, 0, 0, 0, 0}
-
+//TO DO:  variable length
+var message = []byte{'1', '2', '3', '4', '5', '6', '7', '8', '9', '0'}
+var recvbuff = []byte{0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
 
 func init() {
 	flag.IntVar(&runConnections, "c", 10, "number of connections")
 	flag.IntVar(&runDuration, "d", 5, "duration (seconds)")
 	flag.IntVar(&connTimeout, "t", 5, "connection operations timeout")
-	flag.IntVar(&messageLen, "l", 6, "message length")
+
+	//TO DO:
+	//flag.IntVar(&messageLen, "l", 6, "message length")
+	messageLen = 6
+
 	flag.StringVar(&connAddr, "h", "127.0.0.1:7777", " target server address")
 	flag.Parse()
 
 	//deadline for all connections
-	doneBy = time.Now().Add(time.Second * time.Duration(runDuration + connTimeout))
+	doneBy = time.Now().Add(time.Second * time.Duration(runDuration+connTimeout))
 
 }
-
 
 func connection_worker(n int) {
 	defer wg.Done()
@@ -71,11 +68,10 @@ func connection_worker(n int) {
 		return
 	}
 
-
 	// start IO loop
 	for {
 		for done := 0; done < messageLen; {
-			r, err := conn.Write(message);
+			r, err := conn.Write(message)
 			done += r
 			if err != nil {
 				log.Println(err)
@@ -103,9 +99,6 @@ func connection_worker(n int) {
 	//
 }
 
-
-
-
 func main() {
 	flag.Parse()
 	fmt.Println("TCP echo load testing.  ")
@@ -121,7 +114,7 @@ func main() {
 			fmt.Printf("%c", progress[i])
 			fmt.Printf("\033[%dC", 1)
 			i++
-			if (i == 4) {
+			if i == 4 {
 				i = 0
 			}
 			time.Sleep(time.Millisecond * 100)
@@ -144,7 +137,7 @@ func main() {
 	fmt.Println("Done. stats: \n------------------------------- ")
 	fmt.Printf("  Successful operations: %d \n  Failed requests: %d \n  Failed IO: %d \n", successful_reqs, connect_fails, io_fails)
 	fmt.Println("------------------------------- ")
-	fmt.Printf("  Operations/sec: %d \n", successful_reqs / uint64(runDuration))
+	fmt.Printf("  Operations/sec: %d \n", successful_reqs/uint64(runDuration))
 	fmt.Println("=============================== ")
 
 }
