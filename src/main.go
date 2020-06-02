@@ -30,8 +30,8 @@ var runDuration int
 var messageLen int
 
 //TO DO:  variable length
-var message = []byte{'1', '2', '3', '4', '5', '6', '7', '8', '9', '0'}
-var recvbuff = []byte{0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
+var message = []byte{'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'}
+var recvbuff = []byte{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
 
 func init() {
 	flag.IntVar(&runConnections, "c", 10, "number of connections")
@@ -39,8 +39,8 @@ func init() {
 	flag.IntVar(&connTimeout, "t", 5, "connection operations timeout")
 
 	//TO DO:
-	//flag.IntVar(&messageLen, "l", 6, "message length")
-	messageLen = 6
+	//flag.IntVar(&messageLen, "l", 16, "message length")
+	messageLen = 16
 
 	flag.StringVar(&connAddr, "h", "127.0.0.1:7777", " target server address")
 	flag.Parse()
