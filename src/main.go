@@ -76,7 +76,7 @@ func connection_worker(n int) {
 			if err != nil {
 				log.Println(err)
 				atomic.AddUint64(&io_fails, 1)
-				break
+				return
 			}
 		}
 
@@ -86,7 +86,7 @@ func connection_worker(n int) {
 			if err != nil {
 				log.Println(err)
 				atomic.AddUint64(&io_fails, 1)
-				break
+				return
 			}
 		}
 
